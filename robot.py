@@ -9,7 +9,8 @@ class Robot:
 		
 	def setHeader(self):
 		self.header["Content-Type"] = "application/json"
-		self.header["Authorization"] = input("Authorization Code") 
+		self.header["Authorization"] = "x"
+		
 	
 	def getMissions(self):
 		missionList = requests.get(self.host + "missions", headers = self.header)

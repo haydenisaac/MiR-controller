@@ -7,9 +7,9 @@ class Robot:
 		self.host = "http://" + self.name + "/api/v2.0.0/"
 		self.header = {}
 		
-	def setHeader(self):
+	def setHeader(self, auth):
 		self.header["Content-Type"] = "application/json"
-		self.header["Authorization"] = "x"
+		self.header["Authorization"] = auth
 		
 	
 	def getMissions(self):
@@ -26,3 +26,13 @@ class Robot:
 		for key in status.json():
 			print(key,status.json()[key])
 			print("--"*20)
+			
+		return status.json()
+			
+	def putStatus(self, state):
+		status = requests.put(self.host + "status", json = state, headers = self.header)
+		print(status)
+			
+	def getMissionQueue(self):
+		queue = requests.get(self.host + "mission_queue/", headers = self.header)
+		return queue.json()

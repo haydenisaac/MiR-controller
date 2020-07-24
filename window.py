@@ -7,22 +7,23 @@ class Window:
 		ip, auth = self.readFILE()
 		ip = ip.rstrip('\n')
 		
-		
-		
 		self.master = tk.Tk()
-		
 		self.master.title("MiR Controller")
 		self.master.geometry("500x500")
 		self.master.config(background = "white")
+		
 		self.tb1 = tk.Text(self.master, bd = 0)
 		self.tb1.insert(tk.END,"-"*23 + "Connect to Robot" + "-"*23)
 		self.tb1.config(state = tk.DISABLED)
 		self.tb1.place(x = 0, y = 0)
+		
 		self.connect = tk.Button(self.master, text = "connect", command = self.connect)
 		self.connect.place(x = 400, y = 35)
+		
 		self.host = tk.Entry(self.master)
 		self.host.insert(0,ip)
 		self.host.place(x = 150, y = 30)
+		
 		self.auth = tk.Entry(self.master, width = 40)
 		self.auth.insert(0,auth)
 		self.auth.place(x = 100, y = 55)
@@ -34,7 +35,6 @@ class Window:
 	
 	def readFILE(self):
 		FILE = open("address.txt", 'r+')
-		
 		codes = FILE.readlines()
 		FILE.close()
 		return codes
@@ -49,8 +49,12 @@ class Window:
 		name = self.host.get()
 		auth = self.auth.get()
 		self.writeFILE(name, auth)
-		#self.robot = Robot(name)
-		#self.robot.setHeader()
+		self.robot = Robot(name)
+		self.robot.setHeader(auth)
+		self.missionQueue = self.robot.getMissionQueue()
+		self.last = len(self.missionQueue)
+		#print(self.missionQueue[self.last])
+
 		print("Connecting to Robot at " + name)
 		self.update()
 		
@@ -58,8 +62,8 @@ class Window:
 		tk.mainloop()
 		
 	def missions(self):
-		#self.getMissions = self.robot.getMissions()
-		self.getMissions = ["One", "Two", "Three"]
+		self.getMissions = self.robot.getMissions()
+		#self.getMissions = ["One", "Two", "Three"]
 		self.missionList = tk.Listbox(self.master,selectmode = tk.SINGLE, \
 		yscrollcommand = True, height = 5, width = 40)
 		self.missionList.place(x = 10, y = 115)
@@ -68,11 +72,16 @@ class Window:
 		
 		for i in range(len(self.getMissions)):
 			item = self.getMissions[i]
-			#self.dic[item['name']] = i
-			self.missionList.insert(tk.END, item)
+			self.dic[item['name']] = i
+			self.missionList.insert(tk.END, item['name'])
 
 	def status(self):
-		self.robot.getStatus()
+		status = self.robot.getStatus()
+		missionQueue = self.robot.getMissionQueue()
+		
+		self.statusText.config(state = tk.NORMAL)
+		self.statusText.insert(tk.END, "Battery Percentage: " + status["battery_percentage"])
+		self.statusText.config(state = tk.DISABLED)
 		
 	def run(self):
 		self.selected = self.missionList.get(self.missionList.curselection())
@@ -82,11 +91,13 @@ class Window:
 	def pause(self):
 		self.pauseButton.config(state = tk.DISABLED)
 		self.playButton.config(state = tk.NORMAL)
+		self.robot.putStatus({"state_id": 4})
 		print("Pause")
 		
 	def play(self):
 		self.playButton.config(state = tk.DISABLED)
 		self.pauseButton.config(state = tk.NORMAL)
+		self.robot.putStatus({"state_id": 3})
 		print("Play")
 		
 	def update(self):
@@ -101,7 +112,7 @@ class Window:
 			self.hline.place(x = 0, y = 80)
 			
 			self.hline2 = tk.Text(self.master, bd =0, height = 1)
-			self.hline2.insert(tk.END, "-"*26 + "Robot Status" + "-"*26)
+			self.hline2.insert(tk.END, "-"*25 + "Robot Status" + "-"*25)
 			self.hline2.config(state = tk.DISABLED)
 			self.hline2.place(x = 0, y = 220)
 			
@@ -113,8 +124,12 @@ class Window:
 			
 			self.runButton = tk.Button(self.master, text = "Send Mission", command = self.run)
 			self.runButton.place(x = 300, y = 140)
+			
 			self.statusButton = tk.Button(self.master, text = "Update Status", command = self.status)
 			self.statusButton.place(x = 10, y = 270)
+			
+			self.statusText = tk.Text(self.master, bd = 0)
+			self.statusText.config(state = tk.DISABLED)
 		if self.missionList == None:
 			self.missions()
 		

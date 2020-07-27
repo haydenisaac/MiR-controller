@@ -36,3 +36,6 @@ class Robot:
 	def getMissionQueue(self):
 		queue = requests.get(self.host + "mission_queue/", headers = self.header)
 		return queue.json()
+		
+	def deleteMissionQueue(self):
+		return requests.delete(self.host + "mission_queue/", headers = self.header)

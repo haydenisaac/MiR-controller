@@ -32,6 +32,7 @@ class Window:
 		self.missionList = None
 		self.playButton = None
 		self.pauseButton = None
+		self.statusText = None
 	
 	def readFILE(self):
 		FILE = open("address.txt", 'r+')
@@ -62,8 +63,8 @@ class Window:
 		tk.mainloop()
 		
 	def missions(self):
-		#self.getMissions = self.robot.getMissions()
-		self.getMissions = ["One", "Two", "Three"]
+		self.getMissions = self.robot.getMissions()
+		#self.getMissions = ["One", "Two", "Three"]
 		self.missionList = tk.Listbox(self.master,selectmode = tk.SINGLE, \
 		yscrollcommand = True, height = 5, width = 40)
 		self.missionList.place(x = 10, y = 115)
@@ -72,25 +73,30 @@ class Window:
 		
 		for i in range(len(self.getMissions)):
 			item = self.getMissions[i]
-			#self.dic[item['name']] = i
-			self.missionList.insert(tk.END, item)
+			self.dic[item['name']] = i
+			self.missionList.insert(tk.END, item['name'])
 
 	def status(self):
-		#status = self.robot.getStatus()
-		#missionQueue = self.robot.getMissionQueue()
-		missionQueue = [10,11,12]
-		self.last = 1
+		status = self.robot.getStatus()
+		missionQueue = self.robot.getMissionQueue()
+		#missionQueue = [10,11,12]
+		self.last = len(missionQueue) - 1
 		
-		#self.statusText.config(state = tk.NORMAL)
-		#self.statusText.insert(tk.END, "Battery Percentage: " + status["battery_percentage"])
-		#self.statusText.config(state = tk.DISABLED)
+
+		self.statusText.config(state = tk.NORMAL)
+		self.statusText.delete("1.0", "end")
+		self.statusText.insert(tk.END, "Battery Percentage: " + str(status["battery_percentage"]))
+		self.statusText.config(state = tk.DISABLED)
+		self.statusText.place(x = 20, y = 350)
 		
-		newMissions = missionQueue[self.last:]
+		newMissions = missionQueue[self.last:][0]
 		var = tk.StringVar()
 		newMissionQueue = tk.Label(self.master, textvariable = var, width = 30, height = 10, anchor = tk.N)
-		message = "Mission Queue:\n"
-		for item in newMissions:
-			message += str(item) + "\n"
+		url = newMissions['url']
+		name = self.robot.getMissionName(url)
+		message = "Latest Mission:\n Name: {}\n State: {}".format(name, newMissions['state'])
+		
+
 			
 		
 		newMissionQueue.place(x = 248, y = 260)

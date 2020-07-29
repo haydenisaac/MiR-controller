@@ -5,6 +5,7 @@ class Robot:
 	def __init__(self, name):
 		self.name = name
 		self.host = "http://" + self.name + "/api/v2.0.0/"
+		self.hostess = "http://" + self.name + "/api"
 		self.header = {}
 		
 	def setHeader(self, auth):
@@ -36,6 +37,12 @@ class Robot:
 	def getMissionQueue(self):
 		queue = requests.get(self.host + "mission_queue/", headers = self.header)
 		return queue.json()
+		
+	def getMissionName(self, id):
+		name = requests.get(self.hostess + id, headers = self.header)
+		missionID = name.json()['mission_id']
+		name = requests.get(self.host + "missions/" + missionID +"/", headers = self.header)
+		return name.json()['name']
 		
 	def deleteMissionQueue(self):
 		return requests.delete(self.host + "mission_queue/", headers = self.header)

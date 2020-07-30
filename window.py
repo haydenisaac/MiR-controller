@@ -67,7 +67,7 @@ class Window:
 		#self.getMissions = ["One", "Two", "Three"]
 		self.missionList = tk.Listbox(self.master,selectmode = tk.SINGLE, \
 		yscrollcommand = True, height = 5, width = 40)
-		self.missionList.place(x = 10, y = 115)
+		self.missionList.place(x = 10, y = 135)
 		
 		self.dic = {}
 		
@@ -87,7 +87,7 @@ class Window:
 		self.statusText.delete("1.0", "end")
 		self.statusText.insert(tk.END, "Battery Percentage: " + str(status["battery_percentage"]))
 		self.statusText.config(state = tk.DISABLED)
-		self.statusText.place(x = 20, y = 350)
+		self.statusText.place(x = 20, y = 370)
 		
 		newMissions = missionQueue[self.last:][0]
 		var = tk.StringVar()
@@ -99,9 +99,19 @@ class Window:
 
 			
 		
-		newMissionQueue.place(x = 248, y = 260)
+		newMissionQueue.place(x = 248, y = 280)
 		var.set(message)
 		
+	def filter(self):
+		self.missionList.delete(0,tk.END)
+		oldList = self.getMissions
+		self.dic = {}
+		for i in range(len(oldList)):
+			size = len(self.filterButton.get())
+			item = oldList[i]
+			if item['name'][:size] == self.filterButton.get()):
+				self.dic[item['name']] = i
+				self.missionList.insert(tk.END, item['name'])
 		
 		
 	def run(self):
@@ -127,10 +137,6 @@ class Window:
 		
 	def update(self):
 		if self.runButton == None:
-			self.vline = tk.Text(self.master, width = 1, bd = 0)
-			self.vline.insert(tk.END,"|"*20)
-			self.vline.config(state = tk.DISABLED)
-			
 			self.hline = tk.Text(self.master, bd = 0, height = 1)
 			self.hline.insert(tk.END, "-"*23+ "Mission Control" + "-"* 24)
 			self.hline.config(state = tk.DISABLED)
@@ -139,28 +145,34 @@ class Window:
 			self.hline2 = tk.Text(self.master, bd =0, height = 1)
 			self.hline2.insert(tk.END, "-"*25 + "Robot Status" + "-"*25)
 			self.hline2.config(state = tk.DISABLED)
-			self.hline2.place(x = 0, y = 220)
+			self.hline2.place(x = 0, y = 240)
 			
 			self.hline3 = tk.Text(self.master, bd =0, height = 1)
 			self.hline3.insert(tk.END, "-"*11 + "Battery" + "-"*11)
 			self.hline3.config(state = tk.DISABLED)
-			self.hline3.place(x = 0, y = 320)
+			self.hline3.place(x = 0, y = 340)
 			
 			self.playButton = tk.Button(self.master, text = "Play", command = self.play)
-			self.playButton.place(x = 430, y = 140)
+			self.playButton.place(x = 430, y = 160)
 			
 			self.pauseButton = tk.Button(self.master, text = "Pause", command = self.pause)
-			self.pauseButton.place(x = 385, y = 140)
+			self.pauseButton.place(x = 385, y = 160)
 			
 			self.runButton = tk.Button(self.master, text = "Send Mission", command = self.run)
-			self.runButton.place(x = 300, y = 140)
+			self.runButton.place(x = 300, y = 160)
+			
+			self.filterButton = tk.Button(self.master, text = "filter", command = self.filter)
+			self.filterButton.place(x = 200, y = 100)
+			
+			self.filterText = tk.Entry(self.master, width = 30)
+			self.filterText.place(x = 10, y =105)
 			
 			self.deleteButton = tk.Button(self.master, text = "Delete Queue", command = self.delete)
 			
-			self.deleteButton.place(x = 120, y = 270)
+			self.deleteButton.place(x = 120, y = 290)
 			
 			self.statusButton = tk.Button(self.master, text = "Update Status", command = self.status)
-			self.statusButton.place(x = 20, y = 270)
+			self.statusButton.place(x = 20, y = 290)
 			
 			self.statusText = tk.Text(self.master, bd = 0)
 			self.statusText.config(state = tk.DISABLED)

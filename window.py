@@ -107,9 +107,9 @@ class Window:
 		oldList = self.getMissions
 		self.dic = {}
 		for i in range(len(oldList)):
-			size = len(self.filterButton.get())
+			size = len(self.filterText.get())
 			item = oldList[i]
-			if item['name'][:size] == self.filterButton.get()):
+			if item['name'][:size] == self.filterText.get():
 				self.dic[item['name']] = i
 				self.missionList.insert(tk.END, item['name'])
 		
